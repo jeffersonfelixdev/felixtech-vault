@@ -97,7 +97,7 @@ export default function Home() {
                   label="Novo item"
                   className="bg-zinc-900 border-none rounded-md w-40"
                   renderTrigger={() => (
-                    <button className="flex justify-between items-center bg-green-700 text-white px-4 py-2 w-40 rounded-lg hover:bg-green-600">
+                    <button className="flex justify-between items-center bg-blue-800 text-white px-4 py-2 w-40 rounded-lg hover:bg-blue-700">
                       <span>Adicionar Item</span>
                       <DownIcon />
                     </button>

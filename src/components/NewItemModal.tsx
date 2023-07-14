@@ -1,6 +1,6 @@
 "use client";
 import { Modal } from "flowbite-react";
-import { Dispatch, SetStateAction, useCallback, useState } from "react";
+import { Dispatch, SetStateAction, useCallback, useRef, useState } from "react";
 import { itemIcons } from "./itemIcons";
 import axios from "axios";
 
@@ -17,6 +17,8 @@ export const NewItemModal = ({
   type,
   onSubmit,
 }: NewItemModalProps) => {
+  const rootRef = useRef<HTMLDivElement>(null);
+
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -83,12 +85,15 @@ export const NewItemModal = ({
   ]);
 
   return (
-    <div>
+    <div ref={rootRef}>
       <Modal
-        root={document.body}
+        root={rootRef.current ?? undefined}
         size="2xl"
         show={openModal === "default"}
-        onClose={() => setOpenModal(undefined)}
+        onClose={() => {
+          clearForm();
+          setOpenModal(undefined);
+        }}
       >
         <Modal.Header className="bg-blue-800 border-none">
           <span className="text-zinc-100">Novo Item</span>
@@ -213,7 +218,10 @@ export const NewItemModal = ({
         <Modal.Footer className="bg-zinc-900 flex justify-end gap-3 border-t-zinc-700">
           <button
             className="p-2 border border-zinc-700 w-24 hover:bg-zinc-800 transition-all rounded-md"
-            onClick={() => setOpenModal(undefined)}
+            onClick={() => {
+              clearForm();
+              setOpenModal(undefined);
+            }}
           >
             Cancelar
           </button>
