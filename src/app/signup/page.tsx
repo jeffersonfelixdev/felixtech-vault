@@ -18,18 +18,13 @@ export default function Login() {
         event.preventDefault();
         if (password !== repeatPassword)
           throw new Error("Senhas não coincidem");
+        console.log(username, password);
+        await axios.post("/api/v1/vault", {
+          username,
+          password,
+        });
         const userCredentials = Buffer.from(`${username}:${password}`).toString(
           "base64"
-        );
-        console.log(username, password);
-        await axios.post(
-          "/api/v1/vault",
-          {},
-          {
-            headers: {
-              Authorization: `Basic ${userCredentials}`,
-            },
-          }
         );
         localStorage.setItem("fv_uc", userCredentials);
         router.push("/");

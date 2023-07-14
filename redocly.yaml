@@ -1,0 +1,9 @@
+theme:
+  openapi:
+    generateCodeSamples:
+      languages:
+        - lang: curl
+          label: Custom label
+        - lang: Python
+        - lang: JavaScript
+    hideRequestPayloadSample: true

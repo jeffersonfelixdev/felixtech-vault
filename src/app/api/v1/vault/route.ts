@@ -20,7 +20,7 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const [username, password] = getAuth(request);
+    const { username, password } = await request.json();
     const result = await container.items.createVaultUseCase.execute({
       username,
       password,

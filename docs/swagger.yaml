@@ -1,0 +1,79 @@
+openapi: "3.0.3"
+info:
+  title: Felixtech Vault Reference API
+  description: |
+    This is the official documentation of Felixtech Vault API.
+    For more information, see [https://vault.felixtech.dev](https://vault.felixtech.dev)
+  version: "1.0.0"
+  contact:
+    name: Jefferson Felix
+    url: mailto:jsfelix@gmail.com
+servers:
+  - url: http://localhost:3000/api/v1
+    description: Development
+  - url: https://vault.felixtech.dev/api/v1
+    description: Production
+paths:
+  /vault:
+    post:
+      operationId: createVault
+      tags:
+        - Vault
+      summary: Create a new vault
+      description: Create a new vault with given username and password.
+      responses:
+        "201":
+          description: Success
+          content:
+            application/json:
+              example:
+                id: myvault
+                items:
+                  - id: 7e4bbe84-0894-4aca-b836-3b782374dc67
+                    type: vault
+                    name: My Vault
+                    username: myvault
+                    password: "@MyPass2023!"
+                    site: https://vault.felixtech.dev
+                    createdAt: 1689346115898
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                username:
+                  type: string
+                  description: This is the username that will be used to identify the vault. The username must be start with letters, and may have letters, numbers, hiphen (-) or underscore (_).
+                  example: myvault
+                password:
+                  type: string
+                  description: The password that will protect and encrypt your vault.
+                  example: "@MyPass2023!"
+    get:
+      operationId: getVault
+      tags:
+        - Vault
+      security:
+        - basicAuth: []
+      summary: Open vault
+      description: Open vault and show the passwords.
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              example:
+                items:
+                  - id: 251c9768-5928-442e-9c55-46578dcb66f8
+                    type: vault
+                    name: My Vault
+                    username: myvault
+                    password: "@MyPass2023!"
+                    site: https://vault.felixtech.dev
+                    createdAt: 1689346611223
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+      description: Esquema de autenticação padrão
