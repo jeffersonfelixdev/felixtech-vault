@@ -2,6 +2,10 @@ import { container } from "@/server/container";
 import { getAuth } from "@/server/utils";
 import { NextResponse } from "next/server";
 
+export async function OPTIONS() {
+  return new Response(undefined, { status: 204 });
+}
+
 export async function PUT(
   request: Request,
   { params }: { params: { id: string } }

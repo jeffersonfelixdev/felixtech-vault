@@ -6,7 +6,7 @@ export async function middleware(request: NextRequest) {
     response.headers.append("Access-Control-Allow-Origin", "*");
     response.headers.append(
       "Access-Control-Allow-Methods",
-      "GET, POST, PUT, DELETE, OPTIONS"
+      "GET, POST, PUT, PATCH, DELETE, OPTIONS"
     );
     response.headers.append(
       "Access-Control-Allow-Headers",
