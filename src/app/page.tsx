@@ -1,33 +1,54 @@
 "use client";
-import { AllItemsIcon } from "@/components/icons/AllItemsIcon";
 import { CopyIcon } from "@/components/icons/CopyIcon";
-import { DatabaseIcon } from "@/components/icons/DatabaseIcon";
 import { DeleteIcon } from "@/components/icons/DeleteIcon";
 import { EditIcon } from "@/components/icons/EditIcon";
-import { KeyIcon } from "@/components/icons/KeyIcon";
 import { PowerIcon } from "@/components/icons/PowerIcon";
-import { SearchIcon } from "@/components/icons/SearchIcon";
-import { ServerIcon } from "@/components/icons/ServerIcon";
 import { ShareIcon } from "@/components/icons/ShareIcon";
-import { SignOutIcon } from "@/components/icons/SignOutIcon";
-import { StarIcon } from "@/components/icons/StarIcon";
 import { WalletIcon } from "@/components/icons/WalletIcon";
 import { VaultItem } from "@/server/entities/VaultItem";
+import { Dropdown } from "flowbite-react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { DownIcon } from "@/components/icons/DownIcon";
+import { NewItemModal } from "@/components/NewItemModal";
+import { itemIcons } from "@/components/itemIcons";
+
+function sortItems(items: VaultItem[]): VaultItem[] {
+  return items.sort((a, b) => {
+    const weights = {
+      vault: "1",
+      login: "2",
+      ssh: "3",
+      database: "4",
+    };
+    return `${weights[a.type]}${a.name}` > `${weights[b.type]}${b.name}`
+      ? 1
+      : -1;
+  });
+}
 
 export default function Home() {
-  const itemIcons = (size: number) => ({
-    database: <DatabaseIcon size={size} />,
-    login: <KeyIcon size={size} />,
-    ssh: <ServerIcon size={size} />,
-    vault: <WalletIcon size={size} />,
-  });
-
   const router = useRouter();
 
   const [items, setItems] = useState<VaultItem[]>([]);
+  const [openNewItemModal, setOpenNewItemModal] = useState<string | undefined>(
+    ""
+  );
+  const [type, setType] = useState<"login" | "ssh" | "database">("login");
+
+  const updateVault = useCallback(async () => {
+    const userCredentials = localStorage.getItem("fv_uc");
+    const { data } = await axios.get("/api/v1/vault", {
+      headers: { Authorization: `Basic ${userCredentials}` },
+    });
+    const newItems: VaultItem[] = data.items.map((item: any) => {
+      const vaultItem = VaultItem.assign(item);
+      return vaultItem;
+    });
+    setItems(sortItems(newItems));
+    setSelectedItem(newItems[0]);
+  }, []);
 
   const [selectedItem, setSelectedItem] = useState<VaultItem | undefined>(
     undefined
@@ -36,7 +57,7 @@ export default function Home() {
   useEffect(() => {
     const userCredentials = localStorage.getItem("fv_uc");
     axios
-      .get("/api/v1/vault", {
+      .get<{ items: VaultItem[] }>("/api/v1/vault", {
         headers: {
           Authorization: `Basic ${userCredentials}`,
         },
@@ -46,7 +67,7 @@ export default function Home() {
           const vaultItem = VaultItem.assign(item);
           return vaultItem;
         });
-        setItems(newItems);
+        setItems(sortItems(newItems));
         setSelectedItem(newItems[0]);
       })
       .catch(() => {
@@ -71,9 +92,49 @@ export default function Home() {
                 <WalletIcon size={32} />
                 <div className="text-xl text-zinc-300">Felixtech Vault</div>
               </header>
-              <button className="p-2" onClick={handleLogout}>
-                <PowerIcon />
-              </button>
+              <div className="flex gap-2">
+                <Dropdown
+                  label="Novo item"
+                  className="bg-zinc-900 border-none rounded-md w-40"
+                  renderTrigger={() => (
+                    <button className="flex justify-between items-center bg-green-700 text-white px-4 py-2 w-40 rounded-lg hover:bg-green-600">
+                      <span>Adicionar Item</span>
+                      <DownIcon />
+                    </button>
+                  )}
+                >
+                  <Dropdown.Item
+                    className="text-zinc-300 hover:text-zinc-700"
+                    onClick={() => {
+                      setType("login");
+                      setOpenNewItemModal("default");
+                    }}
+                  >
+                    Login/Site
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    className="text-zinc-300 hover:text-zinc-700"
+                    onClick={() => {
+                      setType("database");
+                      setOpenNewItemModal("default");
+                    }}
+                  >
+                    Database
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    className="text-zinc-300 hover:text-zinc-700"
+                    onClick={() => {
+                      setType("ssh");
+                      setOpenNewItemModal("default");
+                    }}
+                  >
+                    Servidor SSH
+                  </Dropdown.Item>
+                </Dropdown>
+                <button className="p-2" onClick={handleLogout}>
+                  <PowerIcon />
+                </button>
+              </div>
             </div>
             <div className="flex">
               <div className="md:block hidden bg-zinc-950 h-[calc(100vh-67px)] border-r border-r-zinc-800 w-64 overflow-auto">
@@ -105,11 +166,20 @@ export default function Home() {
               </div>
               <div className="bg-zinc-950 h-[calc(100vh-67px)] flex-grow overflow-auto">
                 <div className="md:hidden p-4">
-                  <select className="bg-zinc-900 p-2 w-full">
+                  <select
+                    className="bg-zinc-900 p-2 w-full"
+                    onChange={(e) => {
+                      const newSelectedItem = items.find(
+                        (item) => item.id === e.target.value
+                      );
+                      setSelectedItem(newSelectedItem);
+                    }}
+                  >
                     {items.map((item) => (
                       <option
                         key={item.id}
                         selected={item.id === selectedItem.id}
+                        value={item.id}
                       >
                         {item.name}
                       </option>
@@ -178,7 +248,9 @@ export default function Home() {
                       <>
                         <div className="text-zinc-500">site</div>
                         <div className="mb-4">
-                          <a href={selectedItem.site}>{selectedItem.site}</a>
+                          <a target="_blank" href={selectedItem.site}>
+                            {selectedItem.site}
+                          </a>
                         </div>
                       </>
                     )}
@@ -281,6 +353,12 @@ export default function Home() {
           </div>
         </>
       )}
+      <NewItemModal
+        openModal={openNewItemModal}
+        setOpenModal={setOpenNewItemModal}
+        type={type}
+        onSubmit={updateVault}
+      />
     </div>
   );
 }
