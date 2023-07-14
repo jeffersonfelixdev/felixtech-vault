@@ -77,8 +77,8 @@ export default function Login() {
           />
           <input
             type="submit"
-            value="Registrar"
-            className="bg-slate-600 p-2 w-80 rounded-md cursor-pointer hover:bg-slate-700 transition-all"
+            value="Register"
+            className="bg-slate-700 p-2 w-80 rounded-md cursor-pointer hover:bg-slate-800 transition-all"
           />
           <p className="text-red-500">{errorMessage}</p>
         </div>

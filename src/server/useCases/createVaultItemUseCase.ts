@@ -1,10 +1,11 @@
 import { VaultItem } from "../entities/VaultItem";
 import { VaultRepository } from "../providers/VaultRepository";
+import { VaultItemType } from "../types/VaultItemType";
 
 interface CreateVaultItemInput {
   vaultId: string;
   vaultPassword: string;
-  type: "login" | "database" | "ssh";
+  type: VaultItemType;
   name: string;
   username: string;
   password: string;
@@ -13,6 +14,7 @@ interface CreateVaultItemInput {
   port?: number;
   database?: string;
   privateKey?: string;
+  accountID?: string;
 }
 
 interface CreateVaultItemOutput {
@@ -34,6 +36,7 @@ export class CreateVaultItemUseCase {
     port,
     database,
     privateKey,
+    accountID,
   }: CreateVaultItemInput): Promise<CreateVaultItemOutput> {
     const vault = await this.vaultRepository.findById(vaultId);
     if (!vault) throw new Error("vault not found");
@@ -48,6 +51,7 @@ export class CreateVaultItemUseCase {
       port,
       database,
       privateKey,
+      accountID,
     });
     items.push(item);
     await vault.setItems(items, vaultPassword);

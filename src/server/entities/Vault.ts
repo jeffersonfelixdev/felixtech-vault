@@ -30,6 +30,7 @@ export class Vault {
         port,
         database,
         privateKey,
+        accountID,
         createdAt,
         updatedAt,
       }: any) => {
@@ -44,6 +45,7 @@ export class Vault {
           port,
           database,
           privateKey,
+          accountID,
           createdAt,
           updatedAt,
         });

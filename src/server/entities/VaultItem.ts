@@ -1,8 +1,9 @@
 import { randomUUID } from "crypto";
 import { format } from "date-fns";
+import { VaultItemType } from "../types/VaultItemType";
 
 type VaultItemProps = {
-  type: "database" | "login" | "ssh" | "vault";
+  type: VaultItemType;
   name: string;
   username: string;
   password: string;
@@ -11,12 +12,14 @@ type VaultItemProps = {
   port?: number;
   database?: string;
   privateKey?: string;
+  accountID?: string;
+  awsRootAccount?: boolean;
 };
 
 export class VaultItem {
   public readonly id: string;
 
-  private _type!: "database" | "login" | "ssh" | "vault";
+  private _type!: VaultItemType;
 
   private _name!: string;
 
@@ -31,6 +34,8 @@ export class VaultItem {
   private _port?: number;
 
   private _database?: string;
+
+  private _accountID?: string;
 
   private _privateKey?: string;
 
@@ -106,6 +111,14 @@ export class VaultItem {
     this._privateKey = pk;
   }
 
+  get accountID() {
+    return this._accountID;
+  }
+
+  set accountID(accountID: string | undefined) {
+    this._accountID = accountID;
+  }
+
   get createdAt() {
     return this._createdAt;
   }
@@ -143,6 +156,7 @@ export class VaultItem {
     port,
     database,
     privateKey,
+    accountID,
     createdAt,
     updatedAt,
   }: VaultItemProps & { id: string; createdAt: number; updatedAt: number }) {
@@ -157,6 +171,7 @@ export class VaultItem {
       _port: port,
       _database: database,
       _privateKey: privateKey,
+      _accountID: accountID,
       _createdAt: createdAt,
       _updatedAt: updatedAt,
     });
@@ -173,6 +188,7 @@ export class VaultItem {
     port,
     database,
     privateKey,
+    accountID,
   }: VaultItemProps) {
     const item = new VaultItem();
     item._type = type;
@@ -184,6 +200,7 @@ export class VaultItem {
     item._host = host;
     item._port = port;
     item._privateKey = privateKey;
+    item._accountID = accountID;
     item._createdAt = Date.now();
     return item;
   }
@@ -200,6 +217,7 @@ export class VaultItem {
       port: this.port,
       database: this.database,
       privateKey: this.privateKey,
+      accountID: this.accountID,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
     };

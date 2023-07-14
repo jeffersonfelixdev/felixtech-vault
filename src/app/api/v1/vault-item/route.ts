@@ -15,6 +15,7 @@ export async function POST(request: Request) {
       port,
       database,
       privateKey,
+      accountID,
     } = await request.json();
     const result = await container.items.createVaultItemUseCase.execute({
       vaultId,
@@ -28,6 +29,7 @@ export async function POST(request: Request) {
       port,
       database,
       privateKey,
+      accountID,
     });
     return NextResponse.json(result);
   } catch (err) {

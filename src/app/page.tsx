@@ -13,14 +13,16 @@ import { useCallback, useEffect, useState } from "react";
 import { DownIcon } from "@/components/icons/DownIcon";
 import { NewItemModal } from "@/components/NewItemModal";
 import { itemIcons } from "@/components/itemIcons";
+import { VaultItemType } from "@/server/types/VaultItemType";
 
 function sortItems(items: VaultItem[]): VaultItem[] {
   return items.sort((a, b) => {
     const weights = {
       vault: "1",
-      login: "2",
-      ssh: "3",
-      database: "4",
+      aws: "2",
+      login: "3",
+      ssh: "4",
+      database: "5",
     };
     return `${weights[a.type]}${a.name}` > `${weights[b.type]}${b.name}`
       ? 1
@@ -35,7 +37,7 @@ export default function Home() {
   const [openNewItemModal, setOpenNewItemModal] = useState<string | undefined>(
     ""
   );
-  const [type, setType] = useState<"login" | "ssh" | "database">("login");
+  const [type, setType] = useState<VaultItemType>("login");
 
   const updateVault = useCallback(async () => {
     const userCredentials = localStorage.getItem("fv_uc");
@@ -83,7 +85,11 @@ export default function Home() {
   return (
     <div className="flex">
       {!selectedItem ? (
-        <>Carregando...</>
+        <div className="grid h-screen place-items-center m-auto font-semibold">
+          <span className="p-4 bg-zinc-800 rounded-md opacity-50">
+            Loading...
+          </span>
+        </div>
       ) : (
         <>
           <div className="flex-grow h-screen">
@@ -94,11 +100,11 @@ export default function Home() {
               </header>
               <div className="flex gap-2">
                 <Dropdown
-                  label="Novo item"
-                  className="bg-zinc-900 border-none rounded-md w-40"
+                  label="New Item"
+                  className="bg-zinc-900 border-none rounded-md w-32"
                   renderTrigger={() => (
-                    <button className="flex justify-between items-center bg-blue-800 text-white px-4 py-2 w-40 rounded-lg hover:bg-blue-700">
-                      <span>Adicionar Item</span>
+                    <button className="flex justify-between items-center bg-slate-700 text-white px-4 py-2 w-32 rounded-lg hover:bg-slate-800">
+                      <span>Add Item</span>
                       <DownIcon />
                     </button>
                   )}
@@ -128,7 +134,16 @@ export default function Home() {
                       setOpenNewItemModal("default");
                     }}
                   >
-                    Servidor SSH
+                    SSH Server
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    className="text-zinc-300 hover:text-zinc-700"
+                    onClick={() => {
+                      setType("aws");
+                      setOpenNewItemModal("default");
+                    }}
+                  >
+                    AWS
                   </Dropdown.Item>
                 </Dropdown>
                 <button className="p-2" onClick={handleLogout}>
@@ -142,8 +157,8 @@ export default function Home() {
                   {items.map((item) => (
                     <li
                       key={item.id}
-                      className={`mx-2 p-2 rounded-lg hover:bg-slate-900 cursor-pointer ${
-                        selectedItem.id === item.id && `bg-slate-800`
+                      className={`mx-2 p-2 rounded-lg hover:bg-slate-800 cursor-pointer ${
+                        selectedItem.id === item.id && `bg-slate-700`
                       }`}
                       onClick={() => {
                         setSelectedItem(item);
@@ -189,15 +204,15 @@ export default function Home() {
                 <ul className="flex justify-end p-4 gap-6">
                   <li className="flex">
                     <ShareIcon />
-                    &nbsp;Compartilhar
+                    &nbsp;Share
                   </li>
                   <li className="flex">
                     <EditIcon />
-                    &nbsp;Editar
+                    &nbsp;Edit
                   </li>
                   <li className="flex">
                     <DeleteIcon />
-                    &nbsp;Excluir
+                    &nbsp;Delete
                   </li>
                 </ul>
                 <div className="p-4 flex flex-col gap-4">
@@ -244,7 +259,8 @@ export default function Home() {
                   </div>
                   <div>
                     {(selectedItem.type === "login" ||
-                      selectedItem.type === "vault") && (
+                      selectedItem.type === "vault" ||
+                      selectedItem.type === "aws") && (
                       <>
                         <div className="text-zinc-500">site</div>
                         <div className="mb-4">
@@ -255,6 +271,26 @@ export default function Home() {
                       </>
                     )}
 
+                    {!!selectedItem.accountID && (
+                      <>
+                        <div className="text-zinc-500">account ID</div>
+                        <div className="mb-4 flex gap-2 items-center">
+                          <span className="font-mono">
+                            {selectedItem.accountID}
+                          </span>
+                          <div
+                            className="cursor-pointer"
+                            onClick={() => {
+                              navigator.clipboard.writeText(
+                                selectedItem.accountID ?? ""
+                              );
+                            }}
+                          >
+                            <CopyIcon size={20} />
+                          </div>
+                        </div>
+                      </>
+                    )}
                     {(selectedItem.type === "database" ||
                       selectedItem.type === "ssh") && (
                       <>
@@ -272,7 +308,7 @@ export default function Home() {
                             <CopyIcon size={20} />
                           </div>
                         </div>
-                        <div className="text-zinc-500">porta</div>
+                        <div className="text-zinc-500">port</div>
                         <div className="mb-4 flex gap-2 items-center">
                           <span className="font-mono">{selectedItem.port}</span>
                           <div

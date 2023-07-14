@@ -3,11 +3,12 @@ import { Modal } from "flowbite-react";
 import { Dispatch, SetStateAction, useCallback, useRef, useState } from "react";
 import { itemIcons } from "./itemIcons";
 import axios from "axios";
+import { VaultItemType } from "@/server/types/VaultItemType";
 
 interface NewItemModalProps {
   openModal: string | undefined;
   setOpenModal: Dispatch<SetStateAction<string | undefined>>;
-  type: "login" | "ssh" | "database";
+  type: VaultItemType;
   onSubmit: () => Promise<void>;
 }
 
@@ -27,6 +28,8 @@ export const NewItemModal = ({
   const [port, setPort] = useState("");
   const [database, setDatabase] = useState("");
   const [privateKey, setPrivateKey] = useState("");
+  const [accountID, setAccountID] = useState("");
+  const [iamUser, setIamUser] = useState(false);
 
   const clearForm = () => {
     setName("");
@@ -37,9 +40,11 @@ export const NewItemModal = ({
     setPort("");
     setDatabase("");
     setPrivateKey("");
+    setAccountID("");
+    setIamUser(false);
   };
 
-  const handleEdit = useCallback(async () => {
+  const handleSave = useCallback(async () => {
     const payload: {
       type: string;
       name: string;
@@ -50,6 +55,8 @@ export const NewItemModal = ({
       port?: number;
       database?: string;
       privateKey?: string;
+      accountID?: string;
+      awsRootAccount?: boolean;
     } = {
       type,
       name,
@@ -63,6 +70,12 @@ export const NewItemModal = ({
     }
     if (type === "database") payload.database = database;
     if (type === "ssh") payload.privateKey = privateKey;
+    if (type === "aws") {
+      payload.accountID = iamUser ? accountID : "";
+      payload.site = iamUser
+        ? `https://${accountID}.signin.aws.amazon.com/console`
+        : "https://signin.aws.amazon.com/console";
+    }
     const userCredentials = localStorage.getItem("fv_uc");
     await axios.post("/api/v1/vault-item", payload, {
       headers: { Authorization: `Basic ${userCredentials}` },
@@ -82,6 +95,8 @@ export const NewItemModal = ({
     onSubmit,
     host,
     port,
+    iamUser,
+    accountID,
   ]);
 
   return (
@@ -95,8 +110,8 @@ export const NewItemModal = ({
           setOpenModal(undefined);
         }}
       >
-        <Modal.Header className="bg-blue-800 border-none">
-          <span className="text-zinc-100">Novo Item</span>
+        <Modal.Header className="bg-slate-700 border-none">
+          <span className="text-zinc-100">New Item</span>
         </Modal.Header>
         <Modal.Body className="bg-zinc-900 border-b-zinc-700">
           <div className="flex flex-col space-y-4">
@@ -106,7 +121,7 @@ export const NewItemModal = ({
                 id="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Nome do Item"
+                placeholder="Item Name"
                 autoFocus
                 className="bg-zinc-800 p-3 text-xl rounded-md w-full border-2 border-zinc-800 focus:border-blue-500 outline-none"
               />
@@ -149,6 +164,44 @@ export const NewItemModal = ({
                     placeholder="https://felixtech.dev"
                   />
                 </div>
+              )}
+              {type === "aws" && (
+                <>
+                  <div className="flex items-center gap-2 p-2 ">
+                    <input
+                      id="awsRootAccount"
+                      checked={iamUser}
+                      onChange={(e) => {
+                        setIamUser(e.target.checked);
+                      }}
+                      type="checkbox"
+                      className="rounded-md bg-zinc-300"
+                    />
+                    <label
+                      htmlFor="accountID"
+                      className="text-slate-400 text-sm"
+                    >
+                      IAM User
+                    </label>
+                  </div>
+                  {iamUser && (
+                    <div className="flex flex-col p-2 bg-zinc-800 border-zinc-800 border-2 rounded-md focus-within:border-blue-500">
+                      <label
+                        htmlFor="accountID"
+                        className="text-slate-400 text-sm"
+                      >
+                        account ID
+                      </label>
+                      <input
+                        id="accountID"
+                        value={accountID}
+                        onChange={(e) => setAccountID(e.target.value)}
+                        placeholder="123456789012"
+                        className="bg-zinc-800 placeholder-zinc-600 outline-none"
+                      />
+                    </div>
+                  )}
+                </>
               )}
               {(type === "database" || type === "ssh") && (
                 <>
@@ -223,13 +276,13 @@ export const NewItemModal = ({
               setOpenModal(undefined);
             }}
           >
-            Cancelar
+            Cancel
           </button>
           <button
-            className="p-2 border border-zinc-700 bg-blue-800 w-24 hover:bg-blue-700 transition-all cursor-pointer rounded-md"
-            onClick={handleEdit}
+            className="p-2 border border-zinc-700 bg-slate-700 w-24 hover:bg-slate-800 transition-all cursor-pointer rounded-md"
+            onClick={handleSave}
           >
-            Salvar
+            Save
           </button>
         </Modal.Footer>
       </Modal>

@@ -61,15 +61,18 @@ export default function Login() {
           <input
             type="submit"
             value="Login"
-            className="bg-slate-600 p-2 w-80 rounded-md cursor-pointer hover:bg-slate-700 transition-all"
+            className="bg-slate-700 p-2 w-80 rounded-md cursor-pointer hover:bg-slate-800 transition-all"
           />
           <p className="text-red-500">{errorMessage}</p>
-          <p>
-            Não possui cadastro?{" "}
-            <a href="/signup" className="text-blue-600">
-              Cadastre-se!
+          <div className="flex gap-4 items-center">
+            <span>New here?</span>
+            <a
+              href="/signup"
+              className="p-3 bg-zinc-800 rounded-md hover:bg-zinc-700"
+            >
+              Create account
             </a>
-          </p>
+          </div>
         </div>
       </form>
     </div>

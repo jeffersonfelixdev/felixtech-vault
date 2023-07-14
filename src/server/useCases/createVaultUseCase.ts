@@ -18,7 +18,7 @@ export class CreateVaultUseCase {
     const vault = await Vault.create(id, password);
     const item = VaultItem.create({
       type: "vault",
-      name: "Meu Cofre",
+      name: "My Vault",
       username: id,
       password,
       site: "https://vault.felixtech.dev",
