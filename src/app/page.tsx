@@ -370,14 +370,14 @@ export default function Home() {
                 </div>
                 <div className="p-6 mb-2 flex flex-col gap-2 justify-center items-center text-sm text-zinc-600">
                   <p>
-                    Criado em{" "}
+                    Created at{" "}
                     <span className="font-semibold">
                       {selectedItem.formattedCreatedAt}
                     </span>
                   </p>
                   {selectedItem.updatedAt && (
                     <p>
-                      Modificado em{" "}
+                      Updated at{" "}
                       <span className="font-semibold">
                         {selectedItem.formattedUpdatedAt}
                       </span>
