@@ -27,7 +27,7 @@ export default function Login() {
           "base64"
         );
         localStorage.setItem("fv_uc", userCredentials);
-        router.push("/");
+        router.push("/dash");
       } catch (err) {
         setErrorMessage(
           (err as AxiosError<{ message: string }>).response?.data?.message ??
@@ -40,10 +40,13 @@ export default function Login() {
   );
 
   return (
-    <div className="m-auto w-96">
+    <div className="m-auto w-96 md:mt-8">
       <h1 className="flex gap-2 text-xl font-semibold text-center p-4 items-center justify-center">
         <WalletIcon size={32} /> <span>Sign Up</span>
       </h1>
+      <p className="text-zinc-300 py-4">
+        Create a vault in seconds, and store your secrets with security!
+      </p>
       <form onSubmit={handleSubmit}>
         <div className="flex flex-col gap-6 items-center justify-center p-8 bg-zinc-900">
           <input
@@ -75,6 +78,15 @@ export default function Login() {
             value="Register"
             className="bg-slate-700 p-2 w-80 rounded-md cursor-pointer hover:bg-slate-800 transition-all"
           />
+          <div className="flex gap-4 items-center">
+            <span>Already have an account?</span>
+            <a
+              href="/signin"
+              className="p-3 bg-zinc-800 rounded-md hover:bg-zinc-700"
+            >
+              Sign In
+            </a>
+          </div>
           <p className="text-red-500">{errorMessage}</p>
         </div>
       </form>

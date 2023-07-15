@@ -25,7 +25,7 @@ export default function Login() {
           },
         });
         localStorage.setItem("fv_uc", userCredentials);
-        router.push("/");
+        router.push("/dash");
       } catch (err) {
         setErrorMessage(
           (err as AxiosError<{ message: string }>).response?.data?.message ?? ""
@@ -36,7 +36,7 @@ export default function Login() {
   );
 
   return (
-    <div className="m-auto w-96">
+    <div className="m-auto w-96 md:mt-8">
       <h1 className="flex gap-2 text-xl font-semibold text-center p-4 items-center justify-center">
         <WalletIcon size={32} /> <span>Felixtech Vault Login</span>
       </h1>
