@@ -3,7 +3,6 @@ import { CopyIcon } from "@/components/icons/CopyIcon";
 import { DeleteIcon } from "@/components/icons/DeleteIcon";
 import { EditIcon } from "@/components/icons/EditIcon";
 import { PowerIcon } from "@/components/icons/PowerIcon";
-import { ShareIcon } from "@/components/icons/ShareIcon";
 import { WalletIcon } from "@/components/icons/WalletIcon";
 import { VaultItem } from "@/server/entities/VaultItem";
 import { Dropdown } from "flowbite-react";
@@ -11,9 +10,10 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { DownIcon } from "@/components/icons/DownIcon";
-import { NewItemModal } from "@/components/NewItemModal";
+import { ItemModal } from "@/components/ItemModal";
 import { itemIcons } from "@/components/itemIcons";
 import { VaultItemType } from "@/server/types/VaultItemType";
+import { DeleteModal } from "@/components/DeleteModal";
 
 function sortItems(items: VaultItem[]): VaultItem[] {
   return items.sort((a, b) => {
@@ -34,10 +34,12 @@ export default function Home() {
   const router = useRouter();
 
   const [items, setItems] = useState<VaultItem[]>([]);
-  const [openNewItemModal, setOpenNewItemModal] = useState<string | undefined>(
+  const [openItemModal, setOpenItemModal] = useState<string | undefined>("");
+  const [openDeleteModal, setOpenDeleteModal] = useState<string | undefined>(
     ""
   );
   const [type, setType] = useState<VaultItemType>("login");
+  const [editMode, setEditMode] = useState(false);
 
   const updateVault = useCallback(async () => {
     const userCredentials = localStorage.getItem("fv_uc");
@@ -113,7 +115,7 @@ export default function Home() {
                     className="text-zinc-300 hover:text-zinc-700"
                     onClick={() => {
                       setType("login");
-                      setOpenNewItemModal("default");
+                      setOpenItemModal("default");
                     }}
                   >
                     Login/Site
@@ -122,7 +124,7 @@ export default function Home() {
                     className="text-zinc-300 hover:text-zinc-700"
                     onClick={() => {
                       setType("database");
-                      setOpenNewItemModal("default");
+                      setOpenItemModal("default");
                     }}
                   >
                     Database
@@ -131,7 +133,7 @@ export default function Home() {
                     className="text-zinc-300 hover:text-zinc-700"
                     onClick={() => {
                       setType("ssh");
-                      setOpenNewItemModal("default");
+                      setOpenItemModal("default");
                     }}
                   >
                     SSH Server
@@ -140,7 +142,7 @@ export default function Home() {
                     className="text-zinc-300 hover:text-zinc-700"
                     onClick={() => {
                       setType("aws");
-                      setOpenNewItemModal("default");
+                      setOpenItemModal("default");
                     }}
                   >
                     AWS
@@ -152,7 +154,7 @@ export default function Home() {
               </div>
             </div>
             <div className="flex">
-              <div className="md:block hidden bg-zinc-950 h-[calc(100vh-67px)] border-r border-r-zinc-800 w-64 overflow-auto">
+              <div className="md:block hidden bg-zinc-950 h-[calc(100vh-67px)] border-r border-r-zinc-800 w-72 overflow-auto">
                 <ul className="mt-2">
                   {items.map((item) => (
                     <li
@@ -201,20 +203,35 @@ export default function Home() {
                     ))}
                   </select>
                 </div>
-                <ul className="flex justify-end p-4 gap-6">
-                  <li className="flex">
-                    <ShareIcon />
-                    &nbsp;Share
+
+                <ul className="flex justify-end p-2 gap-4 mr-4">
+                  <li>
+                    <button
+                      className="flex p-2 gap-1 rounded-md hover:bg-zinc-800 disabled:text-zinc-700 disabled:hover:bg-zinc-950 disabled:cursor-not-allowed"
+                      onClick={() => {
+                        setEditMode(true);
+                        setOpenItemModal("default");
+                      }}
+                      disabled={selectedItem.type === "vault"}
+                    >
+                      <EditIcon />
+                      <span>Edit</span>
+                    </button>
                   </li>
                   <li className="flex">
-                    <EditIcon />
-                    &nbsp;Edit
-                  </li>
-                  <li className="flex">
-                    <DeleteIcon />
-                    &nbsp;Delete
+                    <button
+                      className="flex p-2 gap-1 rounded-md hover:bg-zinc-800 disabled:text-zinc-700 disabled:hover:bg-zinc-950 disabled:cursor-not-allowed"
+                      onClick={() => {
+                        setOpenDeleteModal("default");
+                      }}
+                      disabled={selectedItem.type === "vault"}
+                    >
+                      <DeleteIcon />
+                      <span>Delete</span>
+                    </button>
                   </li>
                 </ul>
+
                 <div className="p-4 flex flex-col gap-4">
                   <div className="flex items-center gap-4 ml-4 mb-4">
                     {itemIcons(48)[selectedItem.type]}
@@ -389,10 +406,19 @@ export default function Home() {
           </div>
         </>
       )}
-      <NewItemModal
-        openModal={openNewItemModal}
-        setOpenModal={setOpenNewItemModal}
+      <ItemModal
+        openModal={openItemModal}
+        setOpenModal={setOpenItemModal}
         type={type}
+        item={selectedItem}
+        onSubmit={updateVault}
+        editMode={editMode}
+        onClose={() => setEditMode(false)}
+      />
+      <DeleteModal
+        openModal={openDeleteModal}
+        setOpenModal={setOpenDeleteModal}
+        item={selectedItem}
         onSubmit={updateVault}
       />
     </div>

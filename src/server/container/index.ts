@@ -4,6 +4,7 @@ import { CreateVaultUseCase } from "../useCases/createVaultUseCase";
 import { ShowVaultUseCase } from "../useCases/showVaultUseCase";
 import { EditVaultItemUseCase } from "../useCases/editVaultItemUseCase";
 import { CreateVaultItemUseCase } from "../useCases/createVaultItemUseCase";
+import { DeleteVaultItemUseCase } from "../useCases/deleteVaultItemUseCase";
 
 export const container = createContainer()
   .add({
@@ -15,4 +16,6 @@ export const container = createContainer()
     editVaultItemUseCase: () => new EditVaultItemUseCase(ctx.vaultRepository),
     createVaultItemUseCase: () =>
       new CreateVaultItemUseCase(ctx.vaultRepository),
+    deleteVaultItemUseCase: () =>
+      new DeleteVaultItemUseCase(ctx.vaultRepository),
   }));

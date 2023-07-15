@@ -36,3 +36,24 @@ export async function PUT(
     );
   }
 }
+
+export async function DELETE(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const [vaultId, vaultPassword] = getAuth(request);
+    const vaultItemId = params.id;
+    await container.items.deleteVaultItemUseCase.execute({
+      vaultId,
+      vaultItemId,
+      vaultPassword,
+    });
+    return NextResponse.json({ message: "OK" });
+  } catch (err) {
+    return NextResponse.json(
+      { status: "error", message: (err as Error).message },
+      { status: 400 }
+    );
+  }
+}

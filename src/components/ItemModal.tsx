@@ -1,23 +1,37 @@
 "use client";
 import { Modal } from "flowbite-react";
-import { Dispatch, SetStateAction, useCallback, useRef, useState } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { itemIcons } from "./itemIcons";
 import axios from "axios";
 import { VaultItemType } from "@/server/types/VaultItemType";
+import { VaultItem } from "@/server/entities/VaultItem";
 
-interface NewItemModalProps {
+interface ItemModalProps {
   openModal: string | undefined;
   setOpenModal: Dispatch<SetStateAction<string | undefined>>;
   type: VaultItemType;
-  onSubmit: () => Promise<void>;
+  item?: VaultItem;
+  editMode?: boolean;
+  onSubmit: () => any;
+  onClose?: () => any;
 }
 
-export const NewItemModal = ({
+export const ItemModal = ({
   openModal,
   setOpenModal,
-  type,
+  type: newType,
+  item,
+  editMode = false,
   onSubmit,
-}: NewItemModalProps) => {
+  onClose,
+}: ItemModalProps) => {
   const rootRef = useRef<HTMLDivElement>(null);
 
   const [name, setName] = useState("");
@@ -30,6 +44,8 @@ export const NewItemModal = ({
   const [privateKey, setPrivateKey] = useState("");
   const [accountID, setAccountID] = useState("");
   const [iamUser, setIamUser] = useState(false);
+
+  const [type, setType] = useState<VaultItemType>("vault");
 
   const clearForm = () => {
     setName("");
@@ -77,12 +93,19 @@ export const NewItemModal = ({
         : "https://signin.aws.amazon.com/console";
     }
     const userCredentials = localStorage.getItem("fv_uc");
-    await axios.post("/api/v1/vault-item", payload, {
-      headers: { Authorization: `Basic ${userCredentials}` },
-    });
+    if (editMode && item) {
+      await axios.put(`/api/v1/vault-item/${item.id}`, payload, {
+        headers: { Authorization: `Basic ${userCredentials}` },
+      });
+    } else {
+      await axios.post("/api/v1/vault-item", payload, {
+        headers: { Authorization: `Basic ${userCredentials}` },
+      });
+    }
     setOpenModal(undefined);
     clearForm();
     onSubmit();
+    if (onClose) onClose();
   }, [
     type,
     name,
@@ -91,13 +114,32 @@ export const NewItemModal = ({
     site,
     database,
     privateKey,
+    editMode,
+    item,
     setOpenModal,
     onSubmit,
+    onClose,
     host,
     port,
     iamUser,
     accountID,
   ]);
+
+  useEffect(() => {
+    setType(item && editMode ? item.type : newType);
+    if (item && editMode) {
+      setName(item.name);
+      setUsername(item.username);
+      setPassword(item.password);
+      setSite(item.site ?? "");
+      setHost(item.host ?? "");
+      setPort(`${item.port}` ?? "");
+      setDatabase(item.database ?? "");
+      setPrivateKey(item.privateKey ?? "");
+      setAccountID(item.accountID ?? "");
+      setIamUser(!!item.accountID);
+    }
+  }, [item, editMode, newType]);
 
   return (
     <div ref={rootRef}>
@@ -108,6 +150,7 @@ export const NewItemModal = ({
         onClose={() => {
           clearForm();
           setOpenModal(undefined);
+          if (onClose) onClose();
         }}
       >
         <Modal.Header className="bg-slate-700 border-none">
@@ -122,7 +165,6 @@ export const NewItemModal = ({
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Item Name"
-                autoFocus
                 className="bg-zinc-800 p-3 text-xl rounded-md w-full border-2 border-zinc-800 focus:border-blue-500 outline-none"
               />
             </div>
@@ -274,6 +316,7 @@ export const NewItemModal = ({
             onClick={() => {
               clearForm();
               setOpenModal(undefined);
+              if (onClose) onClose();
             }}
           >
             Cancel
