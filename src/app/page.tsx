@@ -2,10 +2,12 @@
 
 import { WalletIcon } from "@/components/icons/WalletIcon";
 import Image from "next/image";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const year = new Date().getFullYear();
+
+  const router = useRouter();
 
   return (
     <div>
@@ -15,7 +17,10 @@ export default function Home() {
             Felixtech Vault
           </h1>
           <div className="flex gap-3">
-            <button className="bg-slate-700 flex gap-2 p-2 w-40 justify-center items-center rounded-md hover:bg-slate-800 ">
+            <button
+              className="bg-slate-700 flex gap-2 p-2 w-40 justify-center items-center rounded-md hover:bg-slate-800"
+              onClick={() => router.push("/dash")}
+            >
               <WalletIcon size={24} />
               <span className="font-semibold">Vault</span>
             </button>
