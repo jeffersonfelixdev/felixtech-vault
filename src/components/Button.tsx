@@ -22,7 +22,7 @@ export const Button = ({
       } ${
         variant === "solid"
           ? "bg-slate-700 hover:bg-slate-800"
-          : " hover:bg-zinc-800"
+          : "hover:bg-zinc-800"
       }`}
       onClick={onClick}
     >
