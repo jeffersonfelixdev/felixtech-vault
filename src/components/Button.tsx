@@ -6,6 +6,7 @@ type ButtonProps = {
   fullWidth?: boolean;
   variant?: "solid" | "outline";
   onClick?: () => any;
+  submit?: boolean;
 };
 
 export const Button = ({
@@ -14,9 +15,11 @@ export const Button = ({
   onClick,
   fullWidth = false,
   variant = "solid",
+  submit = false,
 }: ButtonProps) => {
   return (
     <button
+      type={submit ? "submit" : "button"}
       className={`flex items-center justify-center gap-1 py-2 px-4 rounded-md cursor-pointer  transition-all border border-slate-700 ${
         fullWidth ? "w-full" : "w-max"
       } ${
