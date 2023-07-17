@@ -58,7 +58,7 @@ export default function Home() {
               production.
             </p>
             <p className="md:px-6 lg:px-8 xl:px-16">
-              Visit our reposity{" "}
+              Visit our repository{" "}
               <a
                 className="text-blue-500 cursor-pointer hover:text-blue-600"
                 href="https://github.com/jsfelix/felixtech-vault"
