@@ -14,6 +14,7 @@ import { ItemModal } from "@/components/ItemModal";
 import { itemIcons } from "@/components/itemIcons";
 import { VaultItemType } from "@/server/types/VaultItemType";
 import { DeleteModal } from "@/components/DeleteModal";
+import { Button } from "@/components/Button";
 
 function sortItems(items: VaultItem[]): VaultItem[] {
   return items.sort((a, b) => {

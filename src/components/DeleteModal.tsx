@@ -3,6 +3,7 @@ import { Modal } from "flowbite-react";
 import { Dispatch, SetStateAction, useCallback, useRef, useState } from "react";
 import axios from "axios";
 import { VaultItem } from "@/server/entities/VaultItem";
+import { Button } from "./Button";
 
 interface DeleteModalProps {
   openModal: string | undefined;
@@ -69,21 +70,15 @@ export const DeleteModal = ({
           />
         </Modal.Body>
         <Modal.Footer className="bg-zinc-900 flex justify-end gap-3 border-t-zinc-700">
-          <button
-            className="p-2 border border-zinc-700 w-24 hover:bg-zinc-800 transition-all rounded-md"
+          <Button
+            value="Cancel"
+            variant="outline"
             onClick={() => {
               setOpenModal(undefined);
               if (onClose) onClose();
             }}
-          >
-            Cancel
-          </button>
-          <button
-            className="p-2 border border-zinc-700 bg-slate-700 w-24 hover:bg-slate-800 transition-all cursor-pointer rounded-md"
-            onClick={handleDelete}
-          >
-            Delete
-          </button>
+          />
+          <Button value="Delete" onClick={handleDelete} />
         </Modal.Footer>
       </Modal>
     </div>

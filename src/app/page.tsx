@@ -1,5 +1,7 @@
 "use client";
 
+import { Button } from "@/components/Button";
+import { GitHubIcon } from "@/components/icons/GitHubIcon";
 import { WalletIcon } from "@/components/icons/WalletIcon";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -17,13 +19,20 @@ export default function Home() {
             Felixtech Vault
           </h1>
           <div className="flex gap-3">
-            <button
-              className="bg-slate-700 flex gap-2 p-2 w-40 justify-center items-center rounded-md hover:bg-slate-800"
+            <Button
+              icon={<GitHubIcon size={24} />}
+              value=""
+              variant="outline"
+              onClick={() =>
+                (window.location.href =
+                  "https://github.com/jsfelix/felixtech-vault")
+              }
+            ></Button>
+            <Button
+              icon={<WalletIcon size={24} />}
+              value="Vault"
               onClick={() => router.push("/dash")}
-            >
-              <WalletIcon size={24} />
-              <span className="font-semibold">Vault</span>
-            </button>
+            />
           </div>
         </header>
         <main className="flex flex-col gap-4 p-2 items-center">
@@ -40,7 +49,32 @@ export default function Home() {
             alt="vault"
           />
           <div>
-            <p>Download App here:</p>
+            <h1 className="my-4 md:px-6 lg:px-8 xl:px-16 font-mono text-xl font-semibold text-slate-400">
+              Free for use
+            </h1>
+            <p className="md:px-6 lg:px-8 xl:px-16">
+              Felixtech Vault is a free and open source Vault App that you can
+              use to store your secrets. You may use in development or
+              production.
+            </p>
+            <p className="md:px-6 lg:px-8 xl:px-16">
+              Visit our reposity{" "}
+              <a
+                className="text-blue-500 cursor-pointer hover:text-blue-600"
+                href="https://github.com/jsfelix/felixtech-vault"
+              >
+                here
+              </a>{" "}
+              and contribute!
+            </p>
+            <h1 className="my-4 md:px-6 lg:px-8 xl:px-16 font-mono text-xl font-semibold text-slate-400">
+              Security
+            </h1>
+            <p className="md:px-6 lg:px-8 xl:px-16">
+              All secrets are stored encrypted with a secure algorithm. The
+              architecture uses the zero knowledge principle, so only you can
+              decrypt your vault using a password.
+            </p>
           </div>
         </main>
       </div>

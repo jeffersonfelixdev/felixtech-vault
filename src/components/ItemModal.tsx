@@ -12,6 +12,7 @@ import { itemIcons } from "./itemIcons";
 import axios from "axios";
 import { VaultItemType } from "@/server/types/VaultItemType";
 import { VaultItem } from "@/server/entities/VaultItem";
+import { Button } from "./Button";
 
 interface ItemModalProps {
   openModal: string | undefined;
@@ -311,22 +312,16 @@ export const ItemModal = ({
           </div>
         </Modal.Body>
         <Modal.Footer className="bg-zinc-900 flex justify-end gap-3 border-t-zinc-700">
-          <button
-            className="p-2 border border-zinc-700 w-24 hover:bg-zinc-800 transition-all rounded-md"
+          <Button
+            value="Cancel"
+            variant="outline"
             onClick={() => {
               clearForm();
               setOpenModal(undefined);
               if (onClose) onClose();
             }}
-          >
-            Cancel
-          </button>
-          <button
-            className="p-2 border border-zinc-700 bg-slate-700 w-24 hover:bg-slate-800 transition-all cursor-pointer rounded-md"
-            onClick={handleSave}
-          >
-            Save
-          </button>
+          />
+          <Button value="Save" onClick={handleSave} />
         </Modal.Footer>
       </Modal>
     </div>
