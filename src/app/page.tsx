@@ -78,7 +78,7 @@ export default function Home() {
           </div>
         </main>
       </div>
-      <footer className="p-8 block w-full bg-zinc-900 absolute bottom-0">
+      <footer className="mt-8 p-8 block w-full bg-zinc-900">
         <div>
           &copy; {year} Felixtech Soluções em Tecnologia Ltda. All rights
           reserved.
