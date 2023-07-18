@@ -261,17 +261,27 @@ export default function Dash() {
                       </div>
                       <div className="text-zinc-500">password</div>
                       <div className="font-mono mb-4 flex gap-2 items-center">
-                        <span>{selectedItem.password}</span>
-                        <div
-                          className="cursor-pointer"
-                          onClick={() => {
-                            navigator.clipboard.writeText(
-                              selectedItem.password
-                            );
-                          }}
+                        <span
+                          className={
+                            !selectedItem.password ? "text-zinc-700" : ""
+                          }
                         >
-                          <CopyIcon size={20} />
-                        </div>
+                          {selectedItem.password !== ""
+                            ? selectedItem.password
+                            : "[sem senha]"}
+                        </span>
+                        {!!selectedItem.password && (
+                          <div
+                            className="cursor-pointer"
+                            onClick={() => {
+                              navigator.clipboard.writeText(
+                                selectedItem.password
+                              );
+                            }}
+                          >
+                            <CopyIcon size={20} />
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
