@@ -34,6 +34,7 @@ export const ItemModal = ({
   onClose,
 }: ItemModalProps) => {
   const rootRef = useRef<HTMLDivElement>(null);
+  const focusRef = useRef<HTMLInputElement>(null);
 
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
@@ -48,7 +49,7 @@ export const ItemModal = ({
 
   const [type, setType] = useState<VaultItemType>("vault");
 
-  const clearForm = () => {
+  const clearForm = useCallback(() => {
     setName("");
     setUsername("");
     setPassword("");
@@ -59,7 +60,7 @@ export const ItemModal = ({
     setPrivateKey("");
     setAccountID("");
     setIamUser(false);
-  };
+  }, []);
 
   const handleSave = useCallback(async () => {
     const payload: {
@@ -118,6 +119,7 @@ export const ItemModal = ({
     editMode,
     item,
     setOpenModal,
+    clearForm,
     onSubmit,
     onClose,
     host,
@@ -142,6 +144,14 @@ export const ItemModal = ({
     }
   }, [item, editMode, newType]);
 
+  useEffect(() => {
+    setTimeout(() => {
+      if (openModal && focusRef && focusRef.current) {
+        focusRef.current.focus();
+      }
+    });
+  }, [openModal]);
+
   return (
     <div ref={rootRef}>
       <Modal
@@ -162,6 +172,7 @@ export const ItemModal = ({
             <div className="flex items-center gap-3">
               {itemIcons(40)[type]}
               <input
+                ref={focusRef}
                 id="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}

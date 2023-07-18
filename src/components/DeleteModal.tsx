@@ -1,6 +1,13 @@
 "use client";
 import { Modal } from "flowbite-react";
-import { Dispatch, SetStateAction, useCallback, useRef, useState } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import axios from "axios";
 import { VaultItem } from "@/server/entities/VaultItem";
 import { Button } from "./Button";
@@ -24,6 +31,12 @@ export const DeleteModal = ({
 
   const [confirm, setConfirm] = useState("");
 
+  const confirmRef = useRef<HTMLInputElement>(null);
+
+  const clearForm = useCallback(() => {
+    setConfirm("");
+  }, []);
+
   const handleDelete = useCallback(async () => {
     try {
       if (item && confirm === "DELETE") {
@@ -33,12 +46,17 @@ export const DeleteModal = ({
         });
         setOpenModal(undefined);
         onSubmit();
+        clearForm();
         if (onClose) onClose();
       }
     } catch (err) {
       // todo
     }
-  }, [confirm, item, onClose, onSubmit, setOpenModal]);
+  }, [clearForm, confirm, item, onClose, onSubmit, setOpenModal]);
+
+  useEffect(() => {
+    if (openModal && confirmRef) confirmRef.current?.focus();
+  }, [openModal]);
 
   return (
     <div ref={rootRef}>
@@ -48,6 +66,7 @@ export const DeleteModal = ({
         show={openModal === "default"}
         onClose={() => {
           setOpenModal(undefined);
+          clearForm();
           if (onClose) onClose();
         }}
       >
@@ -60,12 +79,12 @@ export const DeleteModal = ({
             <span className="font-bold">DELETE</span>:
           </p>
           <input
+            ref={confirmRef}
             type="text"
             id="confirm"
             value={confirm}
             onChange={(e) => setConfirm(e.target.value)}
             placeholder=""
-            autoFocus
             className="p-2 bg-zinc-800 border-zinc-800 border-2 rounded-md focus:border-blue-500"
           />
         </Modal.Body>
@@ -75,6 +94,7 @@ export const DeleteModal = ({
             variant="outline"
             onClick={() => {
               setOpenModal(undefined);
+              clearForm();
               if (onClose) onClose();
             }}
           />
