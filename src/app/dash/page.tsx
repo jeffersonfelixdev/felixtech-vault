@@ -160,9 +160,8 @@ export default function Dash() {
                   {items.map((item) => (
                     <li
                       key={item.id}
-                      className={`mx-2 p-2 rounded-lg hover:bg-slate-800 cursor-pointer ${
-                        selectedItem.id === item.id && `bg-slate-700`
-                      }`}
+                      className={`mx-2 p-2 rounded-lg hover:bg-slate-800 cursor-pointer ${selectedItem.id === item.id && `bg-slate-700`
+                        }`}
                       onClick={() => {
                         setSelectedItem(item);
                       }}
@@ -268,7 +267,7 @@ export default function Dash() {
                         >
                           {selectedItem.password !== ""
                             ? selectedItem.password
-                            : "[sem senha]"}
+                            : "[empty]"}
                         </span>
                         {!!selectedItem.password && (
                           <div
@@ -289,15 +288,15 @@ export default function Dash() {
                     {(selectedItem.type === "login" ||
                       selectedItem.type === "vault" ||
                       selectedItem.type === "aws") && (
-                      <>
-                        <div className="text-zinc-500">site</div>
-                        <div className="mb-4">
-                          <a target="_blank" href={selectedItem.site}>
-                            {selectedItem.site}
-                          </a>
-                        </div>
-                      </>
-                    )}
+                        <>
+                          <div className="text-zinc-500">site</div>
+                          <div className="mb-4">
+                            <a target="_blank" href={selectedItem.site}>
+                              {selectedItem.site}
+                            </a>
+                          </div>
+                        </>
+                      )}
 
                     {!!selectedItem.accountID && (
                       <>
@@ -321,37 +320,37 @@ export default function Dash() {
                     )}
                     {(selectedItem.type === "database" ||
                       selectedItem.type === "ssh") && (
-                      <>
-                        <div className="text-zinc-500">host</div>
-                        <div className="mb-4 flex gap-2 items-center">
-                          <span className="font-mono">{selectedItem.host}</span>
-                          <div
-                            className="cursor-pointer"
-                            onClick={() => {
-                              navigator.clipboard.writeText(
-                                selectedItem.host ?? ""
-                              );
-                            }}
-                          >
-                            <CopyIcon size={20} />
+                        <>
+                          <div className="text-zinc-500">host</div>
+                          <div className="mb-4 flex gap-2 items-center">
+                            <span className="font-mono">{selectedItem.host}</span>
+                            <div
+                              className="cursor-pointer"
+                              onClick={() => {
+                                navigator.clipboard.writeText(
+                                  selectedItem.host ?? ""
+                                );
+                              }}
+                            >
+                              <CopyIcon size={20} />
+                            </div>
                           </div>
-                        </div>
-                        <div className="text-zinc-500">port</div>
-                        <div className="mb-4 flex gap-2 items-center">
-                          <span className="font-mono">{selectedItem.port}</span>
-                          <div
-                            className="cursor-pointer"
-                            onClick={() => {
-                              navigator.clipboard.writeText(
-                                String(selectedItem.port) ?? ""
-                              );
-                            }}
-                          >
-                            <CopyIcon size={20} />
+                          <div className="text-zinc-500">port</div>
+                          <div className="mb-4 flex gap-2 items-center">
+                            <span className="font-mono">{selectedItem.port}</span>
+                            <div
+                              className="cursor-pointer"
+                              onClick={() => {
+                                navigator.clipboard.writeText(
+                                  String(selectedItem.port) ?? ""
+                                );
+                              }}
+                            >
+                              <CopyIcon size={20} />
+                            </div>
                           </div>
-                        </div>
-                      </>
-                    )}
+                        </>
+                      )}
                     {selectedItem.type === "database" && (
                       <>
                         <div className="text-zinc-500">database</div>
